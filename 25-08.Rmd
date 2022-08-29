@@ -1,0 +1,93 @@
+---
+title: "25-08"
+output: html_document
+date: "2022-08-29"
+---
+
+Ejercicio 1 
+Cargamos el archivo
+Analogo para los demas breacks
+```{r}
+buffalo = scan("buffalo.txt")
+hist(buffalo, col="brown",breaks = seq(20,130,10), probability = TRUE)
+```
+Ejercicio 2:
+```{r}
+library("ggplot2")
+x = 10
+hist(buffalo, col ="brown", breaks = seq(x,130,10), probability = TRUE)
+```
+
+
+Ejercicio 3:
+```{r}
+f = function(D,x,h){
+  n = length(D)
+  res = 0
+  for (v in D) {
+    if( x - h <= v && v  <= x + h ) res = res + 1 
+  }
+  return(res/n)
+}
+```
+
+Ejercicio 4:
+modificamos la funcion para que esta bien definida para que tome vectores como parametros en x = vector 
+```{r}
+fh = function(D,X,h){
+  n = length(D)
+  l = length(X)
+  r = c()
+  for(i in 1:l){
+    res = 0
+    for (v in D) {
+    if(X[i] - h <= v && v <= X[i] + h) res = res + 1 
+      r[i] = res/n
+    }
+  }
+  return(r)
+}
+## Se puede usar la funcion sum()
+
+h10 = fh(buffalo,sort(buffalo),10)
+h20 = fh(buffalo,sort(buffalo),20)
+h30 = fh(buffalo,sort(buffalo),30)
+```
+Obs: Se tiene que ordenar los datos para que se grafiquen correctamente. 
+
+Ejericio 5: 
+```{r}
+denParsen = function(D,X,h){
+  n = length(D)
+  l = length(X)
+  return = c()
+  for( i in 1:l){
+    res = 0
+    for (d in D) {
+      if(-1 <= (X[i]-d)/h && (X[i]-d)/h <= 1) res = res + 1
+    }
+    return[i] = res/(4*h*n)  
+  }
+  return(return)
+}
+```
+
+Ejercicio 6: 
+```{r}
+datos = seq(25,126.4,length=200)
+h10 = denParsen(buffalo,datos,10)
+ggplot(data.frame(datos,h10),aes( x = datos, y = h10))+
+  geom_line(col="steelblue")+
+  theme_light()
+```
+
+Ejercicio 7: 
+```{r}
+hist(buffalo,freq = FALSE,ylim = c(0,0.02))
+lines(density(buffalo,kernel = "gaussian",width=h),col="yellowgreen",lwd=2)
+lines(density(buffalo,kernel = "epanechnikov",width=h),col="firebrick",lwd=2)
+lines(density(buffalo,kernel = "rectangular",width=h),col="steelblue",lwd=2)
+```
+
+Ejericio 8: 
+Repetir con distintos h.
