@@ -1,0 +1,55 @@
+---
+title: "Practica1"
+output: html_document
+date: "2022-08-29"
+---
+
+#Ejericio 1: 
+
+Cargamos los datos Debernardi.csv 
+```{r}
+debD = read.csv("Debernardi.csv")
+debD
+```
+* Construir una tabla con los valores observados para la variable diagnosis y su frecuencia relativa.
+luego hacer uns grafico de barras con el.
+
+```{r}
+diagnosis = table(debD$diagnosis)
+barplot(diagnosis)
+```
+#Ejericio 2:
+
+* Estimar la probabilidad de ser mujer sabiendo que sobrevivió y comparar con la estimación de ser mujer a bordo del Titanic.
+```{r}
+titanic = read.csv("datos_titanic.csv")
+Psm = titanic$Sex[titanic$Survived == 1]
+#Proba de ser mujer sabiendo que sobreviste.
+p = length(Psm[Psm=="female"] / length(Psm)
+```
+
+* Hacer una tabla de contingencia entre las variables categóricas Survived y Pclass, luego hacer un grafico de barras.
+```{r}
+t_contringencia = table(titanic$Survived,titanic$Pclass)
+
+barplot(t_contringencia, main="Survived vs Pclass",legend = c("no survived","survived"))
+```
+
+Ejercicio 3: 
+
+* Comparar los dos conjuntos de datos mediante histogramas y boxplots, graficando los boxplots en paralelo
+```{r}
+library("ggplot2")
+iridio = read.table("iridio.txt",header = TRUE)
+rodio = read.table("rodio.txt", header = TRUE)
+
+hist(iridio$iridio,main = "Histogram of Iridio",freq = FALSE, xlab = "Iridio")
+hist(rodio$rodio,main = "Histogram of Rodio",freq = FALSE, xlab = "Rodio")
+
+ds = table(iridio$iridio,rodio$rodio)
+
+boxplot(iridio$iridio)
+lines(rodio$rodio)
+```
+
+
