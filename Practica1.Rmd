@@ -18,6 +18,7 @@ luego hacer uns grafico de barras con el.
 diagnosis = table(debD$diagnosis)
 barplot(diagnosis)
 ```
+                                                      *****
 #Ejericio 2:
 
 * Estimar la probabilidad de ser mujer sabiendo que sobrevivió y comparar con la estimación de ser mujer a bordo del Titanic.
@@ -30,11 +31,11 @@ p = length(Psm[Psm=="female"] / length(Psm)
 
 * Hacer una tabla de contingencia entre las variables categóricas Survived y Pclass, luego hacer un grafico de barras.
 ```{r}
-t_contringencia = table(titanic$Survived,titanic$Pclass)
+t_contringencia = table(titanic$Survived, titanic$Pclass)
 
 barplot(t_contringencia, main="Survived vs Pclass",legend = c("no survived","survived"))
 ```
-
+                                                      *****
 Ejercicio 3: 
 
 * Comparar los dos conjuntos de datos mediante histogramas y boxplots, graficando los boxplots en paralelo
@@ -42,14 +43,375 @@ Ejercicio 3:
 library("ggplot2")
 iridio = read.table("iridio.txt",header = TRUE)
 rodio = read.table("rodio.txt", header = TRUE)
+iridio = iridio$iridio
+rodio = rodio$rodio
 
-hist(iridio$iridio,main = "Histogram of Iridio",freq = FALSE, xlab = "Iridio")
-hist(rodio$rodio,main = "Histogram of Rodio",freq = FALSE, xlab = "Rodio")
+hist(iridio, main = "Histogram of Iridio", freq = FALSE, xlab = "Iridio")
+hist(rodio, main = "Histogram of Rodio", freq = FALSE, xlab = "Rodio")
 
-ds = table(iridio$iridio,rodio$rodio)
+boxplot(iridio, rodio, main= "Iridio y Rodio")
+```
 
-boxplot(iridio$iridio)
-lines(rodio$rodio)
+* Hallar las medias, las medianas y las medias podadas al 10 % y 20 % muestrales. Comparar.
+
+```{r}
+t = matrix(nrow = 2,ncol = 4, byrow = TRUE)
+
+t[1,1] = mean(iridio)
+t[2,1] = mean(rodio)
+t[1,2] = median(iridio)
+t[2,2] = median(rodio)
+t[1,3] = mean(iridio, trim = 0.1)
+t[2,3] = mean(rodio, trim = 0.1)
+t[1,4] = mean(iridio, trim = 0.2)
+t[2,4] = mean(rodio, trim = 0.2)
+
+t = as.table(t)
+rownames(t) = c("Iridio","Rodio")
+colnames(t) = c("Media","Mediana","Media01Podada","Media02Podada")
+t
+```
+
+* Hallar los desvı́os estándares, las distancias intercuartiles y las MAD muestrales como medidas de dispersión
+
+```{r}
+m = matrix(nrow = 2,ncol=3)
+
+m[1,1] = sd(iridio)
+m[2,1] = sd(rodio)
+m[1,2] = IQR(iridio)
+m[2,2] = IQR(rodio)
+m[1,3] = mad(iridio)
+m[2,3] = mad(rodio)
+
+m = as.table(m)
+rownames(m) = c("Iridio","Rodio")
+colnames(m) = c("desviación estándar","Distancia IQ","MAD")
+m
+```
+
+* Hallar los cuantiles 0,90, 0,75, 0,50, 0,25 y 0,10
+```{r}
+u = matrix(nrow = 2,ncol = 5)
+u[1,1] = quantile(iridio,0.9)
+u[2,1] = quantile(rodio,0.9)
+u[1,2] = quantile(iridio,0.75)
+u[2,2] = quantile(rodio,0.75)
+u[1,3] = quantile(iridio,0.5)
+u[2,3] = quantile(rodio,0.5)
+u[1,4] = quantile(iridio,0.25)
+u[2,4] = quantile(rodio,0.25)
+u[1,5] = quantile(iridio,0.1)
+u[2,5] = quantile(rodio,0.1)
+
+u = as.table(u)
+rownames(u) = c("Iridio","Rodio")
+colnames(u) = c("0.9","0.75","0.50","0.25","0.1")
+u
+```
+                                                        *****
+# Ejericio 4:
+
+* Realizar un histograma para las calorı́as de cada tipo de salchichas. ¿Observa grupos en algún gráfico? ¿Cuántos grupos observa? ¿Observa algún candidato a dato atı́pico? ¿Alguno de los histogramas tiene una caracterı́stica particular? .
+```{r}
+#Cargamos los datos
+salA = read.table("salchichas_A.txt",header = TRUE)
+salB = read.table("salchichas_B.txt",header = TRUE)
+salC = read.table("salchichas_C.txt",header = TRUE)
+```
+
+```{r}
+hist(salA$CALORIAS.A,main = "Histograma de A",xlab = "Calorias")
+hist(salB$CALORIAS.B,main = "Histograma de B",xlab = "Calorias")
+hist(salC$CALORIAS.C,main = "Histograma de C",xlab = "Calorias")
+```
+* Realizar los boxplots paralelos para las calorı́as.
+
+```{r}
+boxplot(salA$CALORIAS.A,salB$CALORIAS.B,salC$CALORIAS.C)
 ```
 
 
+* Repetimos con la cantidad de sodio.
+```{r}
+hist(salA$SODIO.A,main = "Histograma de A",xlab = "Sodio")
+hist(salB$SODIO.B,main = "Histograma de B",xlab = "Sodio")
+hist(salC$SODIO.C,main = "Histograma de C",xlab = "Sodio")
+```
+
+```{r}
+boxplot(salA$SODIO.A,salB$SODIO.B,salC$SODIO.C)
+```
+                                                        *****
+# Ejericio 5: 
+
+* Cargamos los datos.
+```{r}
+est = read.table("estudiantes.txt", header = TRUE)
+```
+* Estudiar si la distribución de los conjuntos de datos para ambos grupos es normal. 
+
+```{r}
+hist(est$GRUPO1, main = "hist del grupo A")
+hist(est$GRUPO2, main = "hist del grupo B")
+qqnorm(est$GRUPO1, main = "Normal qq grupo A")
+qqline(est$GRUPO1,col="red")
+
+qqnorm(est$GRUPO2, main = "Normal qq grupo A")
+qqline(est$GRUPO2,col="red")
+```
+* ¿Le parece a partir de estos datos que ambos grupos están midiendo lo mismo?
+
+```{r}
+centralidad = matrix(nrow = 2,ncol = 4)
+centralidad[1,1] = mean(est$GRUPO1)
+centralidad[2,1] = mean(est$GRUPO2)
+centralidad[1,2] = median(est$GRUPO1)
+centralidad[2,2] = median(est$GRUPO2)
+centralidad[1,3] = mean(est$GRUPO1,trim = 0.2)
+centralidad[2,3] = mean(est$GRUPO2,trim = 0.2)
+centralidad[1,4] = mad(est$GRUPO1)
+centralidad[2,4] = mad(est$GRUPO2)
+centralidad = as.table(centralidad) 
+rownames(centralidad) = c("Grupo 1","Grupo 2")
+colnames(centralidad) = c("media", "mediana", "-0.2 podada", "MAD")
+centralidad
+```
+Algo parecido se puede hacer con medidas de dispersion pero se graficamente.
+```{r}
+boxplot(est$GRUPO1,est$GRUPO2,main= "Grupo 1 y Grupo 2", col = c("red","green"))
+```
+  Parecen estar midiendo cosas distintas, ya que las medidas de dispersion difieren por mucho, y algo parecido pasa con las medidas de centralidad.
+                                                                    ****
+                                                        
+# EJericio 6: 
+
+* 
+```{r}
+#cargamos los datos 
+nubes = read.table("nubes.txt",header=TRUE)
+```
+
+* Realizar boxplots paralelos. ¿Le parece que el método produce algún efecto?
+> Parece haber mas outliyers favorables.
+
+* Realizar boxplots paralelos habiendo transformado las variables con el logaritmo natural. Observar cómo se modificaron los datos atı́picos respecto del ı́tem a).
+> Los outliyers parecen haberse "normalizados"
+```{r}
+tratadas = nubes$TRATADAS
+controles = nubes$CONTROLES
+nubs_trat_ln = log(tratadas)
+nubs_contr_ln = log(controles)
+boxplot(tratadas, controles, main ="Nubes tratadas y controles")
+boxplot(nubs_trat_ln,nubs_contr_ln, main = "ln(tratadas) y ln(controles)")
+```
+* Analizar la normalidad realizando qqplots e histogramas (de densidad) para ambos conjuntos de datos y superponiendo la curva normal
+> Concluyo que ambas distribuciones no parecen venir de una normal.
+
+```{r}
+hist(tratadas,freq = FALSE, main = "Histograma de nubes tratadas")
+lines(density(tratadas)) # Recordar que es una aproximacion a la densidad, por el nucleo normal por defecto (creo)
+grid(nx = NA, ny = NULL, lty = 2, col = "gray", lwd = 1)
+
+qqnorm(tratadas,main="Normal Q-Q Nubes tratadas")
+qqline(tratadas,col = "red")
+
+hist(controles,freq = FALSE)
+lines(density(controles)) # Recordar que es una aproximacion a la densidad, por el nucleo normal por defecto (creo)
+grid(nx = NA, ny = NULL, lty = 2, col = "gray", lwd = 1)
+
+qqnorm(controles,main="Normal Q-Q Nubes controles")
+qqline(controles,col = "red")
+```
+
+* Realizar la transformación logaritmo natural a los datos (log en R) y repetir b) para los datos transformados.
+> Para las controles si no fuese por un dato atipico puede asemejarse a una normal. 
+
+```{r}
+#Analizamos normalidad de los datos 
+
+hist(nubs_trat_ln,freq = FALSE, main = "Histograma de ln(tratadas)")
+lines(density(nubs_trat_ln)) # Recordar que es una aproximacion a la densidad, por el nucleo normal por defecto (creo)
+grid(nx = NA, ny = NULL, lty = 2, col = "gray", lwd = 1)
+
+qqnorm(nubs_trat_ln,main="Normal Q-Q ln(tratadas)")
+qqline(nubs_trat_ln,col = "red")
+
+hist(nubs_contr_ln,freq = FALSE, main = "Histograma de ln(controles)")
+lines(density(nubs_contr_ln)) # Recordar que es una aproximacion a la densidad, por el nucleo normal por defecto (creo)
+grid(nx = NA, ny = NULL, lty = 2, col = "gray", lwd = 1)
+
+qqnorm(nubs_contr_ln,main="Normal Q-Q ln(controles)")
+qqline(nubs_contr_ln,col = "red")
+```
+
+                                                                ****
+# EJericio 7: 
+
+```{r}
+cpu = read.table("cpu.txt",header = TRUE)
+cpu = cpu$V1
+```
+
+* Calcular la media muestral, la mediana muestral y la media α-podada muestral con α = 0,10 (10 %)
+
+```{r}
+m = matrix(ncol = 3,nrow = 1)
+m[1,1] = mean(cpu)
+m[1,2] = median(cpu)
+m[1,3] = mean(cpu, trim = 0.1)
+m = as.table(m)
+rownames(m) = c("cpu")
+colnames(m) = c("media","mediana","media 0.1")
+m
+```
+
+* Calcular el desvı́o estándar, la distancia intercuartil y la MAD muestrales
+
+```{r}
+u = matrix(nrow = 1, ncol = 3)
+u[1,1] = sd(cpu)
+u[1,2] = IQR(cpu)
+u[1,3] = mad(cpu)
+u = as.table(u)
+rownames(u) = "cpu"
+colnames(u) = c("desvio estandar","distancia intercuantil","MAD")
+u
+```
+
+* Realizar un histograma, un gráfico de la densidad estimada usando la función density y un boxplot. ¿Cuáles son las caracterı́sticas más sobresalientes? ¿Se observan datos atı́picos?
+> Se observan bastantes datos atipicos y la densidad esta corrida a izquierda. 
+
+```{r}
+hist(cpu, freq = FALSE, main = "Histograma de cpu")
+lines(density(cpu))
+grid(nx = NA, ny = NULL, lty = 2, col = "gray", lwd = 1)
+
+boxplot(cpu)
+```
+
+* ¿Cree que los datos tienen distribución normal? Hacer un qqplot para constatar su conjetura o ponerla en duda. 
+> No parece tener una distribucion normal.
+
+```{r}
+qqnorm(cpu)
+qqline(cpu, col = "red")
+```
+
+* ¿Qué medida de posición considera más apropiada para describir el centro de los datos?
+
+```{r}
+hist(cpu)
+abline(v = c(mean(cpu), median(cpu), mean(cpu, trim = 0.1)), col = c("red", "blue", "green"))
+grid(nx = NA, ny = NULL, lty = 2, col = "gray", lwd = 1)
+
+boxplot(cpu)
+abline(h = c(mean(cpu), median(cpu), mean(cpu, trim = 0.1)), col = c("red", "blue", "green"))
+```
+                                                            ****
+
+# Ejericio 8: 
+
+```{r}
+islander_data = read.csv("Islander_data.csv")
+```
+Realizar un histograma con las realizaciones de la variable aleatoria Diff, la diferencia de tiempos.
+
+```{r}
+hist(islander_data$Diff, main = "Histograma de antes-desps del medicamento")
+```
+
+* Estimar P(Diff ≤ 1). 
+
+```{r}
+dif = islander_data$Diff
+proba = 0 
+for (d in dif) {
+  if(d <= 1) proba = proba + 1 
+}
+proba = proba / length(dif)
+proba
+```
+
+* Graficar la función de distribución empı́rica de la variable Diff.
+
+```{r}
+distrEmpirica = function(V){
+  return = 1:length(V)
+  for (i in 1:length(V)) {
+    res = 0
+    for (d in dif) {
+      if(d <= V[i]) res = res + 1
+    }
+    return[i] = res / length(dif)
+  }
+  return(return)
+}
+x = seq(-41,50,0.5)
+plot(x,distrEmpirica(x),,xlim = c(-41,50),type="l")
+```
+
+* Estimar la densidad de Diff usando estimadores basados en núcleos, utilizando diferentes ventanas (h = 0,5, 1,5 y 2,5) y núcleos (rectangular, gaussiano y de Epanechnikov).
+¿Qué observa?
+
+```{r}
+hist(dif, freq = FALSE, main = "Histograma de Diff, ker = rectangular")
+lines(density(dif, kernel = "rectangular", width = 0.5))
+
+hist(dif, freq = FALSE, main = "Histograma de Diff, ker = rectangular")
+lines(density(dif, kernel = "rectangular", width = 1.5))
+
+hist(dif, freq = FALSE, main = "Histograma de Diff, ker = rectangular")
+lines(density(dif, kernel = "rectangular", width = 2.5))
+
+hist(dif, freq = FALSE, main = "Histograma de Diff, ker = gauss")
+lines(density(dif, kernel = "gaussian", width = 0.5))
+
+hist(dif, freq = FALSE, main = "Histograma de Diff, ker = gauss")
+lines(density(dif, kernel = "gaussian", width = 1.5))
+
+hist(dif, freq = FALSE, main = "Histograma de Diff, ker = gauss")
+lines(density(dif, kernel = "gaussian", width = 2.5))
+
+hist(dif, freq = FALSE, main = "Histograma de Diff, ker = epanechnikov")
+lines(density(dif, kernel = "epanechnikov", width = 0.5))
+
+hist(dif, freq = FALSE, main = "Histograma de Diff, ker = epanechnikov")
+lines(density(dif, kernel = "epanechnikov", width = 1.5))
+
+hist(dif, freq = FALSE, main = "Histograma de Diff, ker = epanechnikov")
+lines(density(dif, kernel = "epanechnikov", width = 2.5))
+```
+                                                              ****
+
+# Ejericio 9: 
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

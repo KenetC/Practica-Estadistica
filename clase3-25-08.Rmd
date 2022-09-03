@@ -83,6 +83,7 @@ ggplot(data.frame(datos,h10),aes( x = datos, y = h10))+
 
 Ejercicio 7: 
 ```{r}
+h = 10
 hist(buffalo,freq = FALSE,ylim = c(0,0.02))
 lines(density(buffalo,kernel = "gaussian",width=h),col="yellowgreen",lwd=2)
 lines(density(buffalo,kernel = "epanechnikov",width=h),col="firebrick",lwd=2)

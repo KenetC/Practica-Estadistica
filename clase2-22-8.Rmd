@@ -62,7 +62,7 @@ Calcular medidas de posicion:
 ```{r}
 media = mean(peso)
 mediana = median(peso)
-mediapodad = mean(peso,trie=0.1)
+mediapodad = mean(peso,trim=0.1)
 ```
 
 Calcular medidas de dispersion:
