@@ -384,17 +384,93 @@ lines(density(dif, kernel = "epanechnikov", width = 2.5))
 ```
                                                               ****
 
-# Ejericio 9: 
+# Ejericio 9: (con los datos de Debernardi.csv)
+```{r}
+debD = read.csv("Debernardi.csv")
+```
+
+* Realizar histogramas para la variable LYVE1 basados en los datos brindados para las observaciones que cumplen diagnosis=1, diagnosis=2 y diagnosis=3. Es decir efectuar histogramas según los niveles de la variable factor diagnosis. Indicar las caracterı́sticas más sobresalientes de los histogramas y aquellas que los diferencian.
+> Las densidades empiricas condicionando a diagnosis 1 y 2 parecen ser muy parecidas, en cambio la de 3, aparanta tener mas cantidad de datos en la moda. 
+
+```{r}
+ly_diag1 = debD$LYVE1[ debD$diagnosis == 1 ]
+ly_diag2 = debD$LYVE1[ debD$diagnosis == 2 ]
+ly_diag3 = debD$LYVE1[ debD$diagnosis == 3 ]
+hist(ly_diag1, main = "Histograma de LYVE1 condicionado a diagnosis 1")
+hist(ly_diag2, main = "Histograma de LYVE1 condicionado a diagnosis 2")
+hist(ly_diag3, main = "Histograma de LYVE1 condicionado a diagnosis 3")
+```
 
 
+* Graficar, en distintos colores y superpuestas, las funciones de distribución empı́ricas de la variable LYVE1 según los niveles de la variable factor diagnosis. Decidir si la siguiente afirmación es verdadera o falsa y justificar: “los valores de la variable LYVE1 tienden a ser más altos entre quienes tienen cáncer de páncreas que entre quienes sufren otras enfermedades asociadas al páncreas”
+> La afirmacion parece ser verdadera ya que para LY.. diagnosis == 3, tiende a crecer de forma mas rapida en los datos mas "altos".
+
+```{r}
+ly_diag1
+disEmp1 = function(V){
+  return = 1:length(V)
+  for (i in 1:length(V)) {
+    res = 0
+    for (d in ly_diag1) {
+      if(d <= V[i]) res = res + 1
+    }
+    return[i] = res / length(ly_diag1)
+  }
+  return(return)
+}
+disEmp2 = function(V){
+  return = 1:length(V)
+  for (i in 1:length(V)) {
+    res = 0
+    for (d in ly_diag2) {
+      if(d <= V[i]) res = res + 1
+    }
+    return[i] = res / length(ly_diag2)
+  }
+  return(return)
+}
+disEmp3 = function(V){
+  return = 1:length(V)
+  for (i in 1:length(V)) {
+    res = 0
+    for (d in ly_diag3) {
+      if(d <= V[i]) res = res + 1
+    }
+    return[i] = res / length(ly_diag3)
+  }
+  return(return)
+}
+y = seq(0,24,0.01)
+
+plot(y,disEmp1(y),type = "l", col = "red", xlab = "x", main = "Funciones de distribuciones empiricas")
+lines(y,disEmp2(y),col = "blue")
+lines(y,disEmp3(y),col = "green")
+```
+
+ * Realizar boxplots paralelos para la variable LYVE1 según los niveles de la variable factor diagnosis, considerando el sexo de los pacientes (variable sex). Decidir si la siguiente afirmación es verdadera o falsa y justificar: “en términos generales, el sexo del paciente no afecta los niveles de la proteı́na que se mide en la variable LYVE1”.
+> Por lo menos para valores de Ly.. condicionando a diagnosis = 1, parece tener una leve inclinacion a hombres respecto a mujeres.
+
+```{r}
+ly_diag1_M = debD$LYVE1[debD$sex == "M" & debD$diagnosis == 1]
+ly_diag1_F = debD$LYVE1[debD$sex == "F" & debD$diagnosis == 1]
+ly_diag2_M = debD$LYVE1[debD$sex == "M" & debD$diagnosis == 2]
+ly_diag2_F = debD$LYVE1[debD$sex == "F" & debD$diagnosis == 2]
+ly_diag3_M = debD$LYVE1[debD$sex == "M" & debD$diagnosis == 3]
+ly_diag3_F = debD$LYVE1[debD$sex == "F" & debD$diagnosis == 3]
+boxplot(ly_diag1_M,ly_diag1_F, main = "ly.. diagnosis1, M y F")
+boxplot(ly_diag2_M,ly_diag2_F, main = "ly.. diagnosis2, M y F")
+boxplot(ly_diag3_M,ly_diag3_F, main = "ly.. diagnosis3, M y F")
+```
+
+* Graficar superpuestas las densidades estimadas, que brinda la función density, para la variable LYVE1 según los niveles de la variable factor diagnosis. Describir las caracterı́sticas más sobresalientes de las densidades estimadas y aquellas que las diferencian.
+ > La caracteristica mas notoria que veo es la misma caracteristica que en la funcion de proba acumulada.
  
- 
- 
- 
- 
- 
- 
- 
+```{r}
+plot(density(ly_diag1),col = "red", main = "Densidades de las Ly... diagnosis 1 2 y 3", xlab = "x")
+lines(density(ly_diag2), col = "blue")
+lines(density(ly_diag3), col = "green")
+```
+
  
  
  
