@@ -1,0 +1,37 @@
+---
+title: "clase8-12-09"
+output: html_document
+date: "2022-09-12"
+---
+## Ejercicio 2:
+```{r}
+IC_mu_var_conocida = function(D,var_0,nivel){
+  n = length(D)
+  dif = abs(qnorm((1-nivel)/2)) * var_0 / sqrt(n)
+  return(c(mean(D)- dif,mean(D) + dif))
+}
+```
+
+## Ejericio 3: 
+```{r}
+datos_normales = rnorm(5,4,3)
+IC_mu_var_conocida(datos_normales,3,0.95)
+Nrep = 3
+x = matrix(nrow = Nrep,ncol = 2)
+i = 1
+while (i - 1 < Nrep) {
+  D = rnorm(5,4,3)
+  c = IC_mu_var_conocida(D,3,0.95)
+  x[i,1] = c[1]
+  x[i,2] = c[2]
+  i = i + 1
+}
+res = 0
+for(i in 1:Nrep){
+  if(x[i,1] <= 4 && 4 <= x[i,2] ) {
+    res = res + 1
+  }
+}
+res/Nrep
+```
+
