@@ -1,0 +1,72 @@
+---
+title: "Ejericio 3c"
+output: html_document
+date: "2022-09-11"
+---
+Primero comenzamos programando el estimador por el metodo de momentos, asumimos que los datos provienen de una distribucion $$\Gamma (\alpha,\lambda)$$
+
+```{r}
+est_momentos = function(D){
+  n = length(D)
+  alpha = sum(D)^2 / ( n*sum(D^2) - sum(D)^2 )
+  lambda = sum(D) / (sum(D^2) - (sum(D)^2 / n) )
+  return(c(alpha,lambda))
+}
+```
+
+Algoritmo de Newton Raphson. No se va a usar la funcion.
+```{r}
+newton_raphson = function(ptoInicial, I, funcion, dfuncion){
+  pto_final = ptoInicial
+  iterator = 0 
+  while( iterator < I ){
+    x = pto_final
+    pto_final = x - funcion(x)/dfuncion(x)
+    iterator = iterator + 1
+  }
+  return(pto_final)
+}
+```
+
+funciones 
+```{r}
+f = function(D, alpha){
+  n = lenght(D)
+  y = n * (log(alpha/mean(D)) - digamma(alpha)) + sum(log(D))
+  return(y)
+}
+
+df = function(D, alpha){
+  n = lenght(D)
+  y = n/alpha - n * trigamma(alpha)
+  return(y)
+}
+```
+
+Estimador por el metodo de maxima verosimilitud, se hace de esta forma para luego ver el grafico.
+```{r}
+emv_gamma = function(D, I){
+  mom = est_momentos(D)
+  x = numeric(I+1)
+  x[1] = mom[1]
+  for(i in 1:I){
+    x[i+1] <- x[i] - f(D,x[i]) / df(D,x[i]) 
+  }
+  lambda = x[I+1]/mean(D)
+  emv = c(x[I+1],lambda)
+  return(c(emv,I))
+}
+```
+
+grafica de la evolucion del estimador de maxima verosimilitud 
+```{r}
+D = rgamma(1000,1,2)
+I = 100
+mom = est_momentos(D)
+y = emv_gamma(D,I)[2]
+plot(1:(I+1), y)
+```
+
+
+
+

@@ -8,8 +8,8 @@ date: "2022-08-29"
 
 Cargamos los datos Debernardi.csv 
 ```{r}
+setwd("~/Documents/FCEyN/Estadistica/Datos")
 debD = read.csv("Debernardi.csv")
-debD
 ```
 * Construir una tabla con los valores observados para la variable diagnosis y su frecuencia relativa.
 luego hacer uns grafico de barras con el.
@@ -18,15 +18,17 @@ luego hacer uns grafico de barras con el.
 diagnosis = table(debD$diagnosis)
 barplot(diagnosis)
 ```
+                                                      
                                                       *****
 #Ejericio 2:
 
 * Estimar la probabilidad de ser mujer sabiendo que sobrevivió y comparar con la estimación de ser mujer a bordo del Titanic.
 ```{r}
+setwd("~/Documents/FCEyN/Estadistica/Datos")
 titanic = read.csv("datos_titanic.csv")
 Psm = titanic$Sex[titanic$Survived == 1]
-#Proba de ser mujer sabiendo que sobreviste.
-p = length(Psm[Psm=="female"] / length(Psm)
+
+length(Psm[Psm == "female"]) / length(Psm) 
 ```
 
 * Hacer una tabla de contingencia entre las variables categóricas Survived y Pclass, luego hacer un grafico de barras.
@@ -35,11 +37,13 @@ t_contringencia = table(titanic$Survived, titanic$Pclass)
 
 barplot(t_contringencia, main="Survived vs Pclass",legend = c("no survived","survived"))
 ```
+                                                      
                                                       *****
 Ejercicio 3: 
 
 * Comparar los dos conjuntos de datos mediante histogramas y boxplots, graficando los boxplots en paralelo
 ```{r}
+setwd("~/Documents/FCEyN/Estadistica/Datos")
 library("ggplot2")
 iridio = read.table("iridio.txt",header = TRUE)
 rodio = read.table("rodio.txt", header = TRUE)
@@ -109,12 +113,14 @@ rownames(u) = c("Iridio","Rodio")
 colnames(u) = c("0.9","0.75","0.50","0.25","0.1")
 u
 ```
-                                                        *****
+                                                        
+                                                        ******
 # Ejericio 4:
 
 * Realizar un histograma para las calorı́as de cada tipo de salchichas. ¿Observa grupos en algún gráfico? ¿Cuántos grupos observa? ¿Observa algún candidato a dato atı́pico? ¿Alguno de los histogramas tiene una caracterı́stica particular? .
 ```{r}
 #Cargamos los datos
+setwd("~/Documents/FCEyN/Estadistica/Datos")
 salA = read.table("salchichas_A.txt",header = TRUE)
 salB = read.table("salchichas_B.txt",header = TRUE)
 salC = read.table("salchichas_C.txt",header = TRUE)
@@ -142,11 +148,13 @@ hist(salC$SODIO.C,main = "Histograma de C",xlab = "Sodio")
 ```{r}
 boxplot(salA$SODIO.A,salB$SODIO.B,salC$SODIO.C)
 ```
+                                                        
                                                         *****
 # Ejericio 5: 
 
 * Cargamos los datos.
 ```{r}
+setwd("~/Documents/FCEyN/Estadistica/Datos")
 est = read.table("estudiantes.txt", header = TRUE)
 ```
 * Estudiar si la distribución de los conjuntos de datos para ambos grupos es normal. 
@@ -182,13 +190,15 @@ Algo parecido se puede hacer con medidas de dispersion pero se graficamente.
 boxplot(est$GRUPO1,est$GRUPO2,main= "Grupo 1 y Grupo 2", col = c("red","green"))
 ```
   Parecen estar midiendo cosas distintas, ya que las medidas de dispersion difieren por mucho, y algo parecido pasa con las medidas de centralidad.
-                                                                    ****
+                                                                    
+                                                                    *****
                                                         
 # EJericio 6: 
 
 * 
 ```{r}
 #cargamos los datos 
+setwd("~/Documents/FCEyN/Estadistica/Datos")
 nubes = read.table("nubes.txt",header=TRUE)
 ```
 
@@ -245,12 +255,13 @@ qqnorm(nubs_contr_ln,main="Normal Q-Q ln(controles)")
 qqline(nubs_contr_ln,col = "red")
 ```
 
-                                                                ****
+                                                                *****
 # EJericio 7: 
 
 ```{r}
+setwd("~/Documents/FCEyN/Estadistica/Datos")
 cpu = read.table("cpu.txt",header = TRUE)
-cpu = cpu$V1
+cpu = cpu$X1.86
 ```
 
 * Calcular la media muestral, la mediana muestral y la media α-podada muestral con α = 0,10 (10 %)
@@ -308,11 +319,12 @@ grid(nx = NA, ny = NULL, lty = 2, col = "gray", lwd = 1)
 boxplot(cpu)
 abline(h = c(mean(cpu), median(cpu), mean(cpu, trim = 0.1)), col = c("red", "blue", "green"))
 ```
-                                                            ****
-
+                                                            
+                                                            *****
 # Ejericio 8: 
 
 ```{r}
+setwd("~/Documents/FCEyN/Estadistica/Datos")
 islander_data = read.csv("Islander_data.csv")
 ```
 Realizar un histograma con las realizaciones de la variable aleatoria Diff, la diferencia de tiempos.
@@ -382,12 +394,9 @@ lines(density(dif, kernel = "epanechnikov", width = 1.5))
 hist(dif, freq = FALSE, main = "Histograma de Diff, ker = epanechnikov")
 lines(density(dif, kernel = "epanechnikov", width = 2.5))
 ```
-                                                              ****
-
+                                                              
+                                                              *****
 # Ejericio 9: (con los datos de Debernardi.csv)
-```{r}
-debD = read.csv("Debernardi.csv")
-```
 
 * Realizar histogramas para la variable LYVE1 basados en los datos brindados para las observaciones que cumplen diagnosis=1, diagnosis=2 y diagnosis=3. Es decir efectuar histogramas según los niveles de la variable factor diagnosis. Indicar las caracterı́sticas más sobresalientes de los histogramas y aquellas que los diferencian.
 > Las densidades empiricas condicionando a diagnosis 1 y 2 parecen ser muy parecidas, en cambio la de 3, aparanta tener mas cantidad de datos en la moda. 
