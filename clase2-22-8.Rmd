@@ -1,13 +1,13 @@
 ---
-title: "clase-22-08"
+title: "clase_2"
 output: pdf_document
 date: "2022-08-22"
 ---
 
 ##Primero cargamos los datos:
 ```{r}
+setwd("~/Documents/FCEyN/Estadistica/Datos")
 datos = read.table("ENNyS_menorA2.txt",header=TRUE)
-datos
 ```
 
 ##Para cada variable categorica (sexo y tipo de embarazo), calcular: 

@@ -31,13 +31,13 @@ newton_raphson = function(ptoInicial, I, funcion, dfuncion){
 funciones 
 ```{r}
 f = function(D, alpha){
-  n = lenght(D)
+  n = length(D)
   y = n * (log(alpha/mean(D)) - digamma(alpha)) + sum(log(D))
   return(y)
 }
 
 df = function(D, alpha){
-  n = lenght(D)
+  n = length(D)
   y = n/alpha - n * trigamma(alpha)
   return(y)
 }
@@ -54,7 +54,7 @@ emv_gamma = function(D, I){
   }
   lambda = x[I+1]/mean(D)
   emv = c(x[I+1],lambda)
-  return(c(emv,I))
+  return(x)
 }
 ```
 
@@ -63,8 +63,8 @@ grafica de la evolucion del estimador de maxima verosimilitud
 D = rgamma(1000,1,2)
 I = 100
 mom = est_momentos(D)
-y = emv_gamma(D,I)[2]
-plot(1:(I+1), y)
+y = emv_gamma(D,I)
+plot(1:(I+1), y, type = "l")
 ```
 
 
