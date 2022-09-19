@@ -1,0 +1,187 @@
+---
+title: "Practica2- Parte para hacer en R"
+output: html_document
+date: "2022-09-16"
+---
+## Ejericio 6: 
+
+```{r}
+D = c(1.53,1.65,1.83,1.62,1.75,1.72,1.68,1.65,1.61,1.7,1.6,1.73,1.61,1.52,1.81,1.72,1.5,1.51,1.65,1.58,1.82,1.65,1.72,1.65)
+```
+
+* Estimar a $\mu $ y $\sigma^2$ por MV basados en la muestra dada 
+
+```{r}
+t_EMV = function(D){
+  mu = mean(D)
+  return( c(mu, sum((D-mu)^2)/length(D)) )
+}
+print(t_EMV(D))
+```
+
+* Se considera que el incide es tipico si es menor a 1.73. Estimar la proporcion de la poblacion con un indice tipico. 
+
+```{r}
+filtro_D = D[D < 1.73]
+print(t_EMV(filtro_D))
+```
+
+## Ejericio 12: 
+
+* Generar $n=100$ muestras de una variable aleatoria $exp(\lambda)$ con $\lambda = 1$ y graficar su funcion de distribucion empirica junto con la verdadera funcion de distribucion acumulada.
+
+```{r}
+D_exp = rexp(100,1)
+
+distri_Empirica = function(V,D){
+  return = 1:length(V)
+  for (i in 1:length(V)) {
+    res = 0
+    for (d in D) {
+      if(d <= V[i]) res = res + 1
+    }
+    return[i] = res / length(D)
+  }
+  return(return)
+}
+exp_1 = function(V){
+  re = 1:length(V)
+  for(i in 1:length(V)){
+    re[i] = 1 - exp(-V[i])
+  }
+  return(re) 
+}
+x = seq(0,5,0.1)
+
+plot(x,distri_Empirica(x,D_exp),type = "l", col = "red", xlab = "x", main = "")
+lines(x,exp_1(x),type = "l",col="blue")
+```
+
+* Para las 100 muestras obtenidas en la parte a), calcular EM y EMV de $\lambda$  
+
+```{r}
+est_mom = function(D){
+  return( 1/mean(D) )
+}
+print(est_mom(D_exp))
+```
+
+* Proponer un estimador de la funcion de distribucion acumulada distinto al obtenido en a) 
+
+```{r}
+
+```
+
+
+
+## Ejericio 13d:
+
+```{r}
+n = 6
+D = runif(n,0,3)
+
+est_MV = function(D) return(max(D))
+est_mom = function(D) return(2*mean(D))
+est_mod = function(D) return(max(D)*(length(D)+1)/length(D))
+print(est_mod(D))
+print(est_mom(D))
+print(est_MV(D))
+```
+
+```{r}
+m = 1000 
+N =  c(6,10,20,40,80,200)
+
+v_mom = matrix(nrow=m,ncol = 6)
+v_mod = matrix(nrow=m,ncol = 6)
+v_mv  = matrix(nrow=m,ncol = 6)
+for(i in 1:length(N)){
+  iterator = 1
+  while (iterator <= m) {
+  D = runif(N[i],0,3)
+  
+  v_mom[iterator,i] = 2*mean(D)
+  v_mv[iterator,i] = max(D)
+  v_mod[iterator,i] = max(D) * (N[i]+1)/N[i]
+  iterator = iterator + 1   
+  }
+}
+
+
+```
+
+
+* ECM
+```{r}
+ECM = function(t){
+  return (sum((t-3)^2) / m)
+}
+f = function(n,D){
+  res = 1:n
+  for(i in 1:n){
+    res[i] = ECM(D[,i])
+  }
+  return(res)
+}
+
+plot(N,f(6,v_mom),col="red",main = " n vs t_mv, t_mod, t_mom")
+lines(N,f(6,v_mv),col= "blue",type="p")
+lines(N,f(6,v_mod),col= "green",type = "p")
+```
+
+## Ejericio 14: 
+
+```{r}
+D = c(26.1,26.3,87,95,372.4,0.01,73.3,24.4,11.5,321.2,68.5,81.2,47.3,28.6,830.1,345.5,1202.6,36.6,4.9,4.9,41.1,29)  
+```
+
+
+* estimador de momentos para $\lambda$ y $\alpha$
+
+```{r}
+library("MASS")
+
+est_momentos = function(D){
+  n = length(D)
+  alpha = sum(D)^2 / ( n*sum(D^2) - sum(D)^2 )
+  lambda = sum(D) / (sum(D^2) - (sum(D)^2 / n) )
+  return(c(alpha,lambda))
+}
+
+est_mv = fitdistr(D,densfun = "gamma")
+```
+
+* ?$\mathbb{P}$(#lluvia > 100) 
+
+```{r}
+res = 0
+for(i in 1:length(D)){
+  if(D[i]>=100) res =res+1
+}
+res/length(D)
+```
+
+```{r}
+alpha_m = est_momentos(D)[1]
+lambda_m = est_momentos(D)[2]
+alpha_mv = as.numeric(est_mv$estimate[1])
+rate_mv = as.numeric(est_mv$estimate[2])
+hist(D, freq = FALSE)
+lines(sort(D),dgamma(sort(D), alpha_m, 1/lambda_m), col = "red")
+lines(sort(D),dgamma(sort(D), alpha_mv,rate_mv), col = "green")
+```
+
+## Ejercicio 15b: 
+
+```{r}
+A = c(1.49,1.12,1.08,0.65,0.98,0.86,0.41,0.91,0.85,0.25,0.78,0.3,1.41,0.18,0.52,0.4,0.69,0.81,0.37,0.73)
+B = c(1.31,0.96,1.32,1.41,1.15,0.34,1.16,1.29,1.25,1.18,0.27,0.57,0.66,0.67,1.34,0.47,1.07,1.13,0.25)
+
+a_emv = sqrt(2/mean(A))
+b_emv = max(B)
+
+
+```
+
+
+
