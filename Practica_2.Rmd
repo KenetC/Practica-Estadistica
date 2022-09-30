@@ -168,7 +168,7 @@ alpha_mv = as.numeric(est_mv$estimate[1])
 rate_mv = as.numeric(est_mv$estimate[2])
 hist(D, freq = FALSE, main = "Histograma de # de lluvia")
 lines(density(sort(D),kernel = "rectangular"),col = "brown")
-lines(sort(D),dgamma(sort(D), alpha_m, 1/lambda_m), col = "red")
+lines(sort(D),dgamma(sort(D), alpha_m, lambda_m), col = "red")
 lines(sort(D),dgamma(sort(D), alpha_mv, rate_mv), col = "green")
 ```
 
