@@ -1,0 +1,131 @@
+---
+title: "TP-Bootstrap"
+output: html_document
+date: "2022-10-17"
+---
+
+* Cargamos los datos: 
+
+```{r}
+setwd("~/Documents/FCEyN/Estadistica/Datos")
+datos <- read.csv("heart.csv")
+adiposidad <- datos$adiposidad 
+```
+
+¿Cuál es la expresión del estimador funcional de interés? 
+
+La expresion del estimador es $T(F) = F^{-1}(0.75)= inf{$ $x:0.75 \leq F(x)$ $}$ 
+
+¿Cómo implementa en R el estimador propuesto de Q3?
+
+Una opcion puede ser usar la funcion quantile de R:
+
+```{r}
+quantile(adiposidad,0.75)
+```
+
+Otra opcion: 
+
+```{r}
+empirica <- function(x, datos){
+  return(sum(datos<=x)/length(datos))
+}
+
+x = seq(min(adiposidad), max(adiposidad), 0.01)
+ims = sapply(x, empirica, datos = adiposidad)
+est2 = (x[ims>=0.75])[1]
+est2
+```
+
+Remuestreo los datos: 
+
+```{r}
+B = 2000
+n <- length(adiposidad)
+est_boot <- c()
+
+for(i in 1:B){
+  muestra <- sample(adiposidad, n, replace = TRUE)
+  est_boot[i] <- quantile(muestra, 0.75)
+}
+```
+
+
+1) Una aproximación de la función de distribución acumulada del estimador en cuestión.
+
+```{r}
+ev_empirica <- c()
+for(i in 1:length(est_boot)){
+  ev_empirica[i] <- empirica(sort(est_boot)[i], sort(est_boot))
+}
+
+plot(sort(est_boot), ev_empirica,type="l")
+```
+
+2) Una aproximación de la varianza del estimador del cuartil superior.
+
+```{r}
+varianza_boot = mean((est_boot-mean(est_boot))^2)
+varianza_boot = var(est_boot)
+varianza_boot
+```
+
+3) Una estimación por intervalo del estimador planteado de nivel de confianza aproximado 0,95, asumiendo que la distribución lı́mite del estimador propuesto es normal.
+
+Una opcion de calcular el desvio estandar, quizas mas a mano.
+
+```{r}
+sd_2 = sqrt(mean((est_boot - mean(est_boot))^2))
+```
+
+Otra es usando sd de R 
+
+```{r}
+sd_1 = sd(est_boot)
+```
+
+Luego el IC: 
+
+```{r}
+intervalo_boot_norm <- c(quantile(adiposidad, 0.75) - 1.96*sd_1, quantile(adiposidad, 0.75) + 1.96*sd_1)
+```
+
+4) Una estimación por intervalo bootstrap percentil del estimador planteado de nivel de confianza aproximado 0,95.
+
+```{r}
+alpha = 0.05
+intervalo_boot_perc <- c(quantile(est_boot, alpha/2), quantile(est_boot, 1-alpha/2))
+```
+
+
+```{r}
+alpha=2
+beta=3
+area=seq(4,9,0.01)
+xP <- c(4,area,9)
+yP <- c(0,dgamma(area,alpha,5),0)
+curve(dgamma(x,3,1),xlim=c(0,20),yaxs="i",ylim=c(0,0.15),ylab="f(x)",
+      main='Densidad gamma(3,5)') 
+curve(dgamma(x,3,2),xlim=c(0,20),yaxs="i",ylim=c(0,0.15),ylab="f(x)",
+      main='Densidad gamma(3,6)') 
+
+polygon(xP,yP,col="orange2")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,115 @@
+---
+title: "Tp-Clasificacion"
+output: html_document
+date: "2022-12-10"
+---
+Cargamos los datos y modificamos las variables RainTomorrow y RainToday para que queden como categóricas y con las opciones 1 (si llovió) y 0 (si no llovió). Las otras variables son numéricas.
+
+
+
+```{r}
+setwd("~/Documents/FCEyN/Estadistica/Datos")
+datos <- read.csv("lluviaAus.csv")
+datos$RainTomorrow <-  ifelse(datos$RainTomorrow=="Yes", 1, 0)
+datos$RainTomorrow <- as.factor(datos$RainTomorrow)
+datos$RainToday <-  ifelse(datos$RainToday=="Yes", 1, 0)
+datos$RainToday <- as.factor(datos$RainToday)
+```
+
+# Ejercicio 1
+
+```{r}
+library(ggplot2)
+library(GGally)
+#ggpairs(datos)
+ggpairs(datos, upper = "blank")
+#como usamos la funcion con tantas variables?
+```
+
+Las varaibles temperatura maxima, temperatura minima y temperatura a las 3 de la tarde parecen estar bastante correlacionadas.
+
+
+# Ejercicio 2
+
+```{r}
+library(ggplot2)
+datos %>% ggplot(mapping=aes(x=Sunshine, y=Humidity3pm, color=RainTomorrow)) + 
+  geom_point() +
+  labs(x="Luz solar", y="Humedad a las 3 p.m.")
+```
+La variable 'sunshine' parece tener una capacidad predictiva superior puesto que a mayor numero, casi que todos los dias siguientes no llovio, en cambio para 'Humitidy3pm' a menores valores no siempre llovio. 
+
+# Ejercicio 3
+
+```{r}
+boxplot(Sunshine ~ RainTomorrow, data= datos, main = "Luz solar ~ Llueve Mañana",names=c("No", "Yes"))
+```
+
+Observamos que, en lineas generales, cuando no llueve hay más luz solar que cuando llueve ya que todos los cuantiles son mayores. Sin embargo, el bigote inferior se encuentra al mismo nivel (en 0) por lo que puede haber días que no llueva donde haya poca luz solar.
+
+```{r}
+boxplot(Humidity3pm~RainTomorrow, data = datos, main="Humedad3pm ~ Llueve Mañana", names=c("No","Yes"))
+```
+Acá, al contrario, observamos que los días que llueve suele haber más humedad a las 3 de la tarde que los días que no llueve.
+
+# Ejercicio 4
+
+```{r}
+clasificador.movil <-  function(datos, etiquetas, h, x0) {
+  etiquetas_en_ventana <-  etiquetas[abs(datos - x0) <= h]
+  res <- ifelse(sum(etiquetas_en_ventana==1) / length(etiquetas_en_ventana) >= 0.5, 1, 0)
+  return(res)
+}
+#solo funciona para x y x0 en R. Para Rn (con norma dos) sería:
+
+clasificador.movil2 <- function(datos, etiquetas, h, x0) {
+  etiquetas_en_ventana <-  etiquetas[sqrt(sum((datos - x0)**2)) <= h]
+  res <- ifelse((sum(etiquetas_en_ventana) / length(etiquetas_en_ventana)) >= 0.5, 1, 0)
+  return(res)
+}
+```
+
+
+# Ejercicio 5
+
+```{r}
+ventana_optima <-  function(datos, etiquetas, ventanas) {
+  ECM_ventanas <-  c()
+  etiquetas <- as.numeric(etiquetas==1)
+  for (h in 1:length(ventanas)) {
+    clasificaciones <-  c()
+    for (j in 1:length(etiquetas)) {
+      clasificaciones[j] <-  clasificador.movil(datos[-j], etiquetas[-j], ventanas[h], datos[j])
+    }
+    ECM_ventanas[h] <-  mean((etiquetas - clasificaciones)^2)
+  }
+  index_res <- order(ECM_ventanas)[1]
+  res <-  ventanas[index_res]
+  return(res)
+}
+```
+
+
+# Ejercicio 6
+
+Primero defimos la funcion 
+
+```{r}
+error_de_clasificacion <-  function(datos, etiquetas, ventana) {
+  errores <-  c()
+  etiquetas <- as.numeric(etiquetas==1)
+  for (i in 1:length(etiquetas)) {
+    clasificacion_i <-  clasificador.movil(datos[-i], etiquetas[-i], ventana, datos[i])
+    error <-  abs(etiquetas[i] - clasificacion_i)
+    errores[i] <-  error
+  }
+  return(mean(errores))
+}
+```
+Ahora vamos a evaluarla
+
+```{r}
+ventana <- ventana_optima(datos$Sunshine, datos$RainTomorrow, seq(0.01, 2, length.out=200))
+error_de_clasificacion(datos$Sunshine, datos$RainTomorrow, ventana)
+```
+Luego el error es 0.178

@@ -1,0 +1,34 @@
+---
+title: "P"
+output: html_document
+date: "2022-11-19"
+---
+
+E 5 
+
+Cargamos los datos
+```{r}
+D = read.csv("glakes.csv")
+```
+
+```{r}
+X <- D$Tonnage
+Y <- D$Time
+M <- model.matrix(Y~X) # Es model.matrix (Primero model)
+V <- solve(t(M)%*%M)
+
+reg <- lm(Y~X)
+s <- summary(reg)
+
+coefs <- s$coefficients[,1]
+coefs
+
+plot(X,Y,main="Gráfico")
+abline(a=coefs[1],b=coefs[2],col="blue")
+```
+```{r}
+as.numeric(coefs[2] / (s$sigma*sqrt((V[2,2]))) )
+qt(1-0.01/2,length(X)-2)
+confint(reg,level = 0.95) # intervalos de confianza para los betas
+```
+
